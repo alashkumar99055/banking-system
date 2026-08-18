@@ -431,8 +431,11 @@ document.getElementById('historyForm').addEventListener('submit', (e) => {
 
 (function initUserBar() {
     const username = sessionStorage.getItem('bank-username') || '';
-    const actionsEl = document.querySelector('.topbar-actions');
-    if (!actionsEl) return;
+    const profileMenuContent = document.querySelector('#profileMenuContent');
+    const profileMenu = document.querySelector('#profileMenu');
+    const profileMenuToggle = document.querySelector('#profileMenuToggle');
+    
+    if (!profileMenuContent || !profileMenuToggle) return;
 
     const pill = document.createElement('span');
     pill.className = 'user-pill';
@@ -453,8 +456,21 @@ document.getElementById('historyForm').addEventListener('submit', (e) => {
         window.location.replace('./login.html');
     });
 
-    actionsEl.prepend(pill);
-    actionsEl.insertBefore(logoutBtn, actionsEl.querySelector('#themeToggle'));
+    profileMenuContent.appendChild(pill);
+    profileMenuContent.appendChild(logoutBtn);
+
+    // Toggle profile menu
+    profileMenuToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        profileMenu.hidden = !profileMenu.hidden;
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!profileMenu.contains(e.target) && !profileMenuToggle.contains(e.target)) {
+            profileMenu.hidden = true;
+        }
+    });
 })();
 
 initTheme();

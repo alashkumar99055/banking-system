@@ -176,15 +176,15 @@ body:has(.login-page) .topbar {
     gap: var(--sp-2);
     text-decoration: none;
     color: inherit;
+    min-width: 0;
 }
 
 .brand-logo {
     width: 40px;
     height: 40px;
-    border-radius: var(--r-sm);
     flex-shrink: 0;
     object-fit: contain;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
 }
 
 .brand-name {
@@ -192,6 +192,9 @@ body:has(.login-page) .topbar {
     font-weight: 700;
     letter-spacing: -0.01em;
     color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Icon button */
@@ -1062,9 +1065,8 @@ body:has(.login-page) .topbar {
 .login-brand-icon {
     width: 68px;
     height: 68px;
-    border-radius: var(--r-sm);
     object-fit: contain;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
 }
 
 .login-title {
@@ -1126,19 +1128,21 @@ body:has(.login-page) .topbar {
     outline-color: var(--error, #ef4444) !important;
 }
 
-/* ── Topbar user pill (shown on main vault page when logged in) ── */
+/* ── Topbar user pill (shown in profile menu) ── */
 .user-pill {
     display: flex;
     align-items: center;
     gap: var(--sp-2);
-    background: var(--bg-input);
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: var(--sp-1) var(--sp-3) var(--sp-1) var(--sp-2);
-    font-size: 0.8rem;
-    color: var(--text-secondary);
+    background: var(--saffron-dim);
+    border: 1px solid var(--saffron-muted);
+    border-radius: var(--r-md);
+    padding: var(--sp-2) var(--sp-3);
+    font-size: 0.85rem;
+    color: var(--text-primary);
     font-weight: 500;
-    white-space: nowrap;
+    width: 100%;
+    text-align: center;
+    justify-content: center;
 }
 
 .user-pill svg {
@@ -1148,40 +1152,78 @@ body:has(.login-page) .topbar {
 
 /* Logout button */
 .btn-logout {
-    display: inline-flex;
+    display: flex;
     align-items: center;
+    justify-content: center;
     gap: var(--sp-1);
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    border-radius: var(--radius-md);
-    padding: var(--sp-1) var(--sp-3);
-    font-size: 0.8rem;
-    font-weight: 500;
+    background: var(--error-dim);
+    border: 1px solid rgba(239,68,68,0.2);
+    color: var(--error);
+    border-radius: var(--r-md);
+    padding: var(--sp-2) var(--sp-3);
+    font-size: 0.85rem;
+    font-weight: 600;
     cursor: pointer;
     transition: border-color 0.15s, color 0.15s, background 0.15s;
     white-space: nowrap;
+    width: 100%;
 }
 
 .btn-logout:hover {
-    border-color: var(--error, #ef4444);
-    color: var(--error, #ef4444);
-    background: rgba(239,68,68,0.06);
+    border-color: var(--error);
+    color: var(--white);
+    background: var(--error);
 }
 
-/* Topbar actions gap */
+/* Profile menu dropdown */
+.profile-menu {
+    position: absolute;
+    top: 100%;
+    right: var(--sp-2);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-card);
+    padding: var(--sp-2);
+    margin-top: var(--sp-2);
+    z-index: 1000;
+    min-width: 200px;
+}
+
+.profile-menu[hidden] {
+    display: none;
+}
+
+.profile-menu-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+}
+
 .topbar-actions {
     display: flex;
     align-items: center;
     gap: var(--sp-2);
+    position: relative;
 }
 
 @media (max-width: 420px) {
     .login-card {
         padding: var(--sp-6) var(--sp-4);
     }
-    .user-pill span {
-        display: none; /* hide username text on very small screens, keep icon */
+    .brand-logo {
+        width: 32px;
+        height: 32px;
+    }
+    .brand-name {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .brand-logo {
+        width: 36px;
+        height: 36px;
     }
 }
 
