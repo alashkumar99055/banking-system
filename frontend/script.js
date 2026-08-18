@@ -124,7 +124,10 @@ function renderAccount(container, account) {
 }
 
 async function api(path, options = {}) {
-    const res = await fetch(apiUrl(path), options);
+    const res = await fetch(apiUrl(path), {
+        ...options,
+        headers: authHeaders(options.headers || {}),
+    });
     if (res.status === 401) {
         handleUnauthorized();
         throw new Error('Unauthorized');
