@@ -547,11 +547,6 @@ public class Server {
                         json.append(",");
                     }
 
-                    /*
-                     * FIX:
-                     * Use escapeJson(), which is the actual helper
-                     * defined in this class.
-                     */
                     json.append("{")
                             .append("\"id\":\"")
                             .append(escapeJson(acc.getId()))
@@ -592,6 +587,47 @@ public class Server {
                         exchange,
                         200,
                         json.toString()
+                );
+
+            } catch (SQLException e) {
+                sendInternalServerError(exchange, e);
+            }
+
+        } else if ("DELETE".equals(method)) {
+            // Expected path: /api/customers/{accountNumber}
+            String path = exchange.getRequestURI().getPath();
+            String[] segments = path.split("/");
+
+            // segments: ["", "api", "customers", "{accountNumber}"]
+            if (segments.length < 4 || segments[3].isBlank()) {
+                sendJson(
+                        exchange,
+                        400,
+                        "{\"error\":\"Account number is required\"}"
+                );
+                return;
+            }
+
+            String accountNumber = decode(segments[3]);
+
+            try {
+                boolean deleted = database.deleteAccount(accountNumber);
+
+                if (!deleted) {
+                    sendJson(
+                            exchange,
+                            404,
+                            "{\"error\":\"Customer not found\"}"
+                    );
+                    return;
+                }
+
+                sendJson(
+                        exchange,
+                        200,
+                        "{\"status\":\"deleted\",\"accountNumber\":\""
+                                + escapeJson(accountNumber)
+                                + "\"}"
                 );
 
             } catch (SQLException e) {
@@ -1573,7 +1609,7 @@ public class Server {
         exchange.getResponseHeaders()
                 .set(
                         "Access-Control-Allow-Methods",
-                        "GET, POST, OPTIONS"
+                        "GET, POST, DELETE, OPTIONS"
                 );
 
         exchange.getResponseHeaders()

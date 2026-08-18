@@ -315,6 +315,7 @@ document.getElementById('creditForm').addEventListener('submit', async (e) => {
 });
 
 let pendingWithdraw = null;
+let pendingDelete = null; // { accountNumber, customerName }
 
 document.getElementById('withdrawForm').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -335,8 +336,11 @@ document.getElementById('withdrawForm').addEventListener('submit', (e) => {
         return;
     }
     pendingWithdraw = amount;
+    pendingDelete = null;
+    document.getElementById('dialog-title').textContent = 'Confirm withdrawal?';
     document.getElementById('dialog-desc').textContent =
         `Withdraw ${formatMoney(amount)} from ${withdrawState.account.customerName} (${withdrawState.account.accountNumber})? Available: ${formatMoney(withdrawState.account.balance)}.`;
+    confirmActionBtn.textContent = 'Confirm Withdraw';
     openDialog();
 });
 
@@ -350,6 +354,7 @@ function closeDialog() {
     confirmDialog.removeAttribute('open');
     dialogBackdrop.classList.remove('active');
     pendingWithdraw = null;
+    pendingDelete = null;
     document.removeEventListener('keydown', handleDialogKey);
 }
 function handleDialogKey(e) {
@@ -359,6 +364,22 @@ cancelActionBtn.addEventListener('click', closeDialog);
 dialogBackdrop.addEventListener('click', closeDialog);
 
 confirmActionBtn.addEventListener('click', async () => {
+    if (pendingDelete) {
+        const { accountNumber, customerName } = pendingDelete;
+        closeDialog();
+        const message = document.getElementById('customersMessage');
+        try {
+            await api(`/api/customers/${encodeURIComponent(accountNumber)}`, {
+                method: 'DELETE',
+            });
+            showToast(message, `Customer "${customerName}" deleted successfully.`, 'success');
+            loadCustomers();
+        } catch (err) {
+            showToast(message, err.message, 'error');
+        }
+        return;
+    }
+
     if (!pendingWithdraw || !withdrawState.account) return;
     const amount = pendingWithdraw;
     const accountNumber = withdrawState.account.accountNumber;
@@ -441,7 +462,7 @@ async function loadCustomers() {
             return;
         }
         list.innerHTML = customers.map((customer) => `
-            <article class="customer-item">
+            <article class="customer-item" data-account="${escapeHtml(customer.accountNumber)}">
                 <div class="customer-info">
                     <div class="customer-name">${escapeHtml(customer.customerName)}</div>
                     <div class="customer-detail">
@@ -460,9 +481,40 @@ async function loadCustomers() {
                 <div class="customer-balance">
                     <div class="customer-balance-label">Balance</div>
                     <div class="customer-balance-amount">${formatMoney(customer.balance)}</div>
+                    <button
+                        class="btn btn-ghost item-btn item-btn-delete"
+                        aria-label="Delete ${escapeHtml(customer.customerName)}"
+                        data-account="${escapeHtml(customer.accountNumber)}"
+                        data-name="${escapeHtml(customer.customerName)}"
+                        title="Delete customer"
+                        type="button"
+                    >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                            <path d="M10 11v6M14 11v6"/>
+                            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                        </svg>
+                    </button>
                 </div>
             </article>
         `).join('');
+
+        // Wire up delete buttons after rendering
+        list.querySelectorAll('.item-btn-delete').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const accountNumber = btn.dataset.account;
+                const customerName = btn.dataset.name;
+                pendingDelete = { accountNumber, customerName };
+                pendingWithdraw = null;
+                document.getElementById('dialog-title').textContent = 'Delete customer?';
+                document.getElementById('dialog-desc').textContent =
+                    `This will permanently delete ${customerName} (${accountNumber}) and all their transaction history. This cannot be undone.`;
+                confirmActionBtn.textContent = 'Delete';
+                openDialog();
+            });
+        });
         message.className = 'toast';
     } catch (err) {
         list.innerHTML = '';

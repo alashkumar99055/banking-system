@@ -208,6 +208,59 @@ public class Database {
         return accounts;
     }
 
+    /**
+     * Deletes an account and all its transaction history.
+     * Runs inside a single transaction: transactions are deleted first to
+     * satisfy the FK constraint, then the account row is removed.
+     *
+     * @return true if a row was deleted, false if the account was not found.
+     */
+    public boolean deleteAccount(String accountNumber) throws SQLException {
+        try (Connection connection = getConnection()) {
+            connection.setAutoCommit(false);
+            try {
+                // Resolve the account UUID first
+                String lookupSql = "SELECT id FROM accounts WHERE account_number = ?";
+                String accountId = null;
+                try (PreparedStatement stmt = connection.prepareStatement(lookupSql)) {
+                    stmt.setString(1, accountNumber);
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        if (rs.next()) {
+                            accountId = rs.getString("id");
+                        }
+                    }
+                }
+
+                if (accountId == null) {
+                    connection.rollback();
+                    return false;
+                }
+
+                // Delete transactions that reference this account
+                String deleteTxnSql = "DELETE FROM transactions WHERE account_id = ?";
+                try (PreparedStatement stmt = connection.prepareStatement(deleteTxnSql)) {
+                    stmt.setObject(1, UUID.fromString(accountId));
+                    stmt.executeUpdate();
+                }
+
+                // Delete the account itself
+                String deleteAccSql = "DELETE FROM accounts WHERE id = ?";
+                try (PreparedStatement stmt = connection.prepareStatement(deleteAccSql)) {
+                    stmt.setObject(1, UUID.fromString(accountId));
+                    stmt.executeUpdate();
+                }
+
+                connection.commit();
+                return true;
+            } catch (SQLException e) {
+                connection.rollback();
+                throw e;
+            } finally {
+                connection.setAutoCommit(true);
+            }
+        }
+    }
+
     public Optional<BankTransaction> findTransactionByIdempotencyKey(String key) throws SQLException {
         if (key == null || key.isBlank()) return Optional.empty();
         String sql = "SELECT t.id, t.account_id, a.account_number, t.type, t.amount, t.previous_balance, " +
