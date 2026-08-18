@@ -1,71 +1,77 @@
 /* ================================================================
-   VAULT — Password Manager
-   Mobile-first, Indian flag–inspired palette
-   Saffron #FF6B00 · White #FFFFFF · Green #128807 · Chakra Navy #06038D
+   VAULT — Banking UI (Redesigned)
+   Modern rounded theme using maroon · white · yellow · black
    ================================================================ */
 
 /* ── 1. Design tokens ─────────────────────────────────────────── */
 :root {
-    /* Brand palette */
-    --saffron:        #FF6B00;
-    --saffron-light:  #FF8C38;
-    --saffron-dim:    #FF6B0018;
-    --saffron-muted:  #FF6B0030;
-    --green:          #128807;
-    --green-light:    #1aad08;
-    --green-dim:      #12880718;
-    --green-muted:    #12880730;
-    --chakra:         #06038D;
+    /* Brand palette (repurposed variable names for minimal markup changes) */
+    --saffron:        #7B0A0A; /* maroon */
+    --saffron-light:  #9B1B1B;
+    --saffron-dim:    rgba(123,10,10,0.10);
+    --saffron-muted:  rgba(123,10,10,0.14);
+    --green:          #FFD54A; /* warm yellow used for accents */
+    --green-light:    #FFE27A;
+    --green-dim:      rgba(255,213,74,0.10);
+    --green-muted:    rgba(255,213,74,0.18);
+    --chakra:         #000000; /* black accent */
     --white:          #FFFFFF;
 
     /* Neutrals (dark theme default) */
-    --bg-base:        #0d0f14;
-    --bg-surface:     #141720;
-    --bg-card:        #1a1e2e;
-    --bg-card-hover:  #1f2438;
-    --bg-input:       #0f1119;
-    --bg-input-focus: #111525;
+    --bg-base:        #0b0b0b;
+    --bg-surface:     #0f0f10;
+    --bg-card:        #121214;
+    --bg-card-hover:  #17171a;
+    --bg-input:       #0f0f11;
+    --bg-input-focus: #161616;
 
-    --border:         #2a2f45;
+    --border:         #1f1f23;
     --border-focus:   var(--saffron);
-    --border-subtle:  #1e2338;
+    --border-subtle:  #19191c;
 
-    --text-primary:   #f0f2f8;
-    --text-secondary: #8b93b0;
-    --text-muted:     #565e7a;
-    --text-inverse:   #0d0f14;
+    --text-primary:   #f7f6f5;
+    --text-secondary: #bdb7b7;
+    --text-muted:     #9a9494;
+    --text-inverse:   #0b0b0b;
 
     /* Semantic */
     --success:        #22c55e;
-    --success-dim:    #22c55e18;
+    --success-dim:    rgba(34,197,94,0.09);
     --error:          #ef4444;
-    --error-dim:      #ef444418;
-    --warning:        #f59e0b;
+    --error-dim:      rgba(239,68,68,0.10);
+    --warning:        var(--green);
 
     /* Spacing scale */
     --sp-1: 4px;   --sp-2: 8px;   --sp-3: 12px;  --sp-4: 16px;
     --sp-5: 20px;  --sp-6: 24px;  --sp-8: 32px;  --sp-10: 40px;
 
-    /* Radii */
-    --r-sm:  8px;
-    --r-md:  12px;
-    --r-lg:  18px;
-    --r-xl:  24px;
+    /* Radii — increase for a rounded, friendly look */
+    --r-sm:  12px;
+    --r-md:  18px;
+    --r-lg:  26px;
+    --r-xl:  32px;
     --r-full: 9999px;
 
+    /* Backward-compatible radius tokens used elsewhere */
+    --radius-sm: var(--r-sm);
+    --radius-md: var(--r-md);
+    --radius-lg: var(--r-lg);
+    --radius-xl: var(--r-xl);
+
     /* Shadows */
-    --shadow-card:   0 4px 24px rgba(0,0,0,0.32), 0 1px 3px rgba(0,0,0,0.2);
-    --shadow-input:  0 0 0 3px var(--saffron-muted);
-    --shadow-btn:    0 4px 14px rgba(255, 107, 0, 0.35);
-    --shadow-dialog: 0 20px 60px rgba(0,0,0,0.6);
+    --shadow-card:   0 8px 30px rgba(0,0,0,0.48), 0 2px 6px rgba(0,0,0,0.24);
+    --shadow-input:  0 0 0 4px rgba(123,10,10,0.08);
+    --shadow-btn:    0 10px 30px rgba(123,10,10,0.18);
+    --shadow-dialog: 0 28px 80px rgba(0,0,0,0.72);
+    --shadow-lg:     0 10px 30px rgba(0,0,0,0.45);
 
     /* Motion */
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
     --duration: 200ms;
 
     /* Layout */
-    --topbar-h:   56px;
-    --max-width:  1120px;
+    --topbar-h:   64px;
+    --max-width:  1200px;
     --page-pad:   var(--sp-4);
 }
 
@@ -104,7 +110,8 @@ html {
 }
 
 body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    /* Use Apple's SF if available, fallback to system sans */
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-size: 15px;
     line-height: 1.6;
     background-color: var(--bg-base);
@@ -130,10 +137,11 @@ body {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: var(--bg-card);
-    border-bottom: 1px solid var(--border-subtle);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), var(--bg-card));
+    border-bottom: 1px solid rgba(255,255,255,0.02);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 6px 0;
 }
 
 .topbar-inner {
@@ -149,10 +157,10 @@ body {
 /* Tricolor accent stripe */
 .topbar-tricolor {
     display: flex;
-    height: 3px;
+    height: 4px;
 }
 .tc-saffron { flex: 1; background: var(--saffron); }
-.tc-white   { flex: 1; background: var(--white); }
+.tc-white   { flex: 1; background: var(--white); opacity: 0.06; }
 .tc-green   { flex: 1; background: var(--green); }
 
 /* Brand */
@@ -167,23 +175,20 @@ body {
 .brand-icon {
     display: grid;
     place-items: center;
-    width: 36px;
-    height: 36px;
-    background: linear-gradient(135deg, var(--saffron), #e55a00);
-    border-radius: var(--r-sm);
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--saffron), var(--saffron-light));
+    border-radius: var(--r-full);
     color: var(--white);
     flex-shrink: 0;
-    box-shadow: 0 2px 8px rgba(255,107,0,0.4);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.45);
 }
 
 .brand-name {
-    font-size: 1.1rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    background: linear-gradient(90deg, var(--saffron) 0%, var(--saffron-light) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
 }
 
 /* Icon button */
@@ -221,22 +226,22 @@ body {
     gap: var(--sp-4);
     margin-bottom: var(--sp-6);
     padding: var(--sp-6) var(--sp-6);
-    background: var(--bg-card);
-    border-radius: var(--r-xl);
-    border: 1px solid var(--border-subtle);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));
+    border-radius: calc(var(--r-xl) + 6px);
+    border: 1px solid transparent;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
 }
 
 /* Subtle gradient wash behind hero */
 .hero::before {
     content: '';
     position: absolute;
-    inset: 0;
-    background: linear-gradient(120deg,
-        var(--saffron-dim) 0%,
-        transparent 45%,
-        var(--green-dim) 100%);
+    left: -20%; top: -40%;
+    width: 240px; height: 240px;
+    background: radial-gradient(circle at 30% 30%, var(--saffron-dim), transparent 35%);
+    filter: blur(34px);
+    opacity: 0.95;
     pointer-events: none;
 }
 
@@ -316,9 +321,9 @@ body {
 
 /* ── 7. Card ──────────────────────────────────────────────────── */
 .card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--r-lg);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), var(--bg-card));
+    border: 1px solid rgba(255,255,255,0.02);
+    border-radius: var(--r-xl);
     box-shadow: var(--shadow-card);
     overflow: hidden;
 }
@@ -379,14 +384,14 @@ body {
 
 .field-input {
     width: 100%;
-    padding: 11px var(--sp-3);
+    padding: 12px var(--sp-3);
     font: inherit;
-    font-size: 0.95rem;
-    background: var(--bg-input);
+    font-size: 0.96rem;
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), var(--bg-input));
     color: var(--text-primary);
-    border: 1.5px solid var(--border);
-    border-radius: var(--r-md);
-    transition: border-color var(--duration), box-shadow var(--duration), background var(--duration);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--r-md) + 6px);
+    transition: border-color var(--duration), box-shadow var(--duration), background var(--duration), transform 120ms;
     -webkit-appearance: none;
     appearance: none;
 }
@@ -519,7 +524,7 @@ body {
     font: inherit;
     font-size: 0.9rem;
     font-weight: 700;
-    border-radius: var(--r-md);
+    border-radius: var(--r-lg);
     border: 1.5px solid transparent;
     cursor: pointer;
     text-decoration: none;
@@ -545,25 +550,28 @@ body {
 
 /* Primary — saffron */
 .btn-primary {
-    background: linear-gradient(135deg, var(--saffron) 0%, #e55a00 100%);
+    background: linear-gradient(180deg, var(--saffron) 0%, var(--saffron-light) 100%);
     color: var(--white);
     box-shadow: var(--shadow-btn);
     flex: 1;
+    border: 1px solid rgba(255,255,255,0.04);
 }
 .btn-primary:hover:not(:disabled) {
-    background: linear-gradient(135deg, var(--saffron-light) 0%, var(--saffron) 100%);
-    box-shadow: 0 6px 20px rgba(255,107,0,0.45);
+    transform: translateY(-2px);
+    box-shadow: 0 18px 36px rgba(123,10,10,0.22);
 }
 
 /* Secondary — outlined green */
 .btn-secondary {
-    background: var(--green-dim);
-    color: var(--green-light);
-    border-color: var(--green-muted);
+    background: transparent;
+    color: var(--text-primary);
+    border-color: rgba(255,255,255,0.04);
+    backdrop-filter: blur(6px);
 }
 .btn-secondary:hover:not(:disabled) {
-    background: var(--green-muted);
-    border-color: var(--green);
+    background: rgba(255,255,255,0.02);
+    color: var(--green);
+    border-color: var(--green-muted);
 }
 
 /* Ghost */
@@ -1031,11 +1039,11 @@ body {
 /* Login card */
 .login-card {
     width: 100%;
-    max-width: 420px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-xl);
-    padding: var(--sp-8) var(--sp-7);
+    max-width: 460px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), var(--bg-card));
+    border: 1px solid rgba(255,255,255,0.02);
+    border-radius: calc(var(--r-xl) + 4px);
+    padding: var(--sp-8) var(--sp-6);
     box-shadow: var(--shadow-lg);
     display: flex;
     flex-direction: column;
