@@ -63,6 +63,7 @@
             <button class="dash-nav-btn is-active" data-panel="create" type="button">Create New Account</button>
             <button class="dash-nav-btn" data-panel="credit" type="button">Credit</button>
             <button class="dash-nav-btn" data-panel="withdraw" type="button">Withdraw</button>
+            <button class="dash-nav-btn" data-panel="customers" type="button">Customer List</button>
             <button class="dash-nav-btn" data-panel="history" type="button">History</button>
         </nav>
 
@@ -190,6 +191,19 @@
                 </form>
                 <div id="historyMessage" class="toast" role="alert" aria-live="polite"></div>
                 <div id="historyList" class="history-list"></div>
+            </div>
+        </section>
+
+        <section class="card panel" id="panel-customers" hidden aria-labelledby="customers-heading">
+            <div class="card-header">
+                <h2 class="card-title" id="customers-heading">Customer List</h2>
+            </div>
+            <div class="card-body">
+                <div class="form-actions">
+                    <button type="button" class="btn btn-primary" id="loadCustomersBtn">Load Customers</button>
+                </div>
+                <div id="customersMessage" class="toast" role="alert" aria-live="polite"></div>
+                <div id="customersList" class="customers-list"></div>
             </div>
         </section>
     </main>

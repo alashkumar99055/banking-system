@@ -194,6 +194,20 @@ public class Database {
         }
     }
 
+    public List<Account> listAllAccounts() throws SQLException {
+        String sql = "SELECT id, account_number, customer_name, phone, address, balance, created_at, updated_at " +
+                "FROM accounts ORDER BY created_at DESC";
+        List<Account> accounts = new java.util.ArrayList<>();
+        try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    accounts.add(mapAccount(rs));
+                }
+            }
+        }
+        return accounts;
+    }
+
     public Optional<BankTransaction> findTransactionByIdempotencyKey(String key) throws SQLException {
         if (key == null || key.isBlank()) return Optional.empty();
         String sql = "SELECT t.id, t.account_id, a.account_number, t.type, t.amount, t.previous_balance, " +

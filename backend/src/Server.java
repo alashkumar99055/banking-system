@@ -78,6 +78,7 @@ public class Server {
         httpServer.createContext("/api/me", this::handleMe);
         httpServer.createContext("/api/health", this::handleHealth);
         httpServer.createContext("/api/accounts", this::handleAccounts);
+        httpServer.createContext("/api/customers", this::handleCustomers);
         httpServer.createContext("/api/transactions", this::handleTransactions);
         httpServer.createContext("/", this::handleRoot);
         httpServer.setExecutor(null);
@@ -302,6 +303,44 @@ public class Server {
                 return;
             }
             sendInternalServerError(exchange, e);
+        }
+    }
+
+    private void handleCustomers(HttpExchange exchange) throws IOException {
+        addCorsHeaders(exchange);
+        if (preflight(exchange)) return;
+
+        String userId = getAuthenticatedUserId(exchange);
+        if (userId == null) {
+            sendJson(exchange, 401, "{\"error\":\"Unauthorized\"}");
+            return;
+        }
+
+        String method = exchange.getRequestMethod();
+        if ("GET".equals(method)) {
+            try {
+                List<Database.Account> accounts = database.listAllAccounts();
+                StringBuilder json = new StringBuilder("[");
+                for (int i = 0; i < accounts.size(); i++) {
+                    Database.Account acc = accounts.get(i);
+                    if (i > 0) json.append(",");
+                    json.append("{")
+                        .append("\"id\":").append(acc.id).append(",")
+                        .append("\"accountNumber\":\"").append(escapeJsonString(acc.accountNumber)).append("\",")
+                        .append("\"customerName\":\"").append(escapeJsonString(acc.customerName)).append("\",")
+                        .append("\"phone\":\"").append(escapeJsonString(acc.phone)).append("\",")
+                        .append("\"address\":\"").append(escapeJsonString(acc.address)).append("\",")
+                        .append("\"balance\":").append(acc.balance).append(",")
+                        .append("\"createdAt\":\"").append(acc.createdAt).append("\"")
+                        .append("}");
+                }
+                json.append("]");
+                sendJson(exchange, 200, json.toString());
+            } catch (SQLException e) {
+                sendInternalServerError(exchange, e);
+            }
+        } else {
+            sendJson(exchange, 405, "{\"error\":\"Method not allowed\"}");
         }
     }
 

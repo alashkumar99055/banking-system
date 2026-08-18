@@ -157,6 +157,9 @@ document.querySelectorAll('.dash-nav-btn').forEach((btn) => {
         if (panel === 'history') {
             loadHistory();
         }
+        if (panel === 'customers') {
+            loadCustomers();
+        }
     });
 });
 
@@ -423,6 +426,56 @@ async function loadHistory() {
         btn.classList.remove('is-loading');
     }
 }
+
+async function loadCustomers() {
+    const list = document.getElementById('customersList');
+    const message = document.getElementById('customersMessage');
+    const btn = document.getElementById('loadCustomersBtn');
+    btn.disabled = true;
+    btn.classList.add('is-loading');
+    list.innerHTML = '<div class="skeleton skeleton-item"></div><div class="skeleton skeleton-item"></div><div class="skeleton skeleton-item"></div>';
+    try {
+        const customers = await api(`/api/customers`, { headers: authHeaders() });
+        if (!customers.length) {
+            list.innerHTML = '<p class="empty-desc">No customers yet.</p>';
+            return;
+        }
+        list.innerHTML = customers.map((customer) => `
+            <article class="customer-item">
+                <div class="customer-info">
+                    <div class="customer-name">${escapeHtml(customer.customerName)}</div>
+                    <div class="customer-detail">
+                        <span class="customer-detail-label">Account:</span>
+                        <span>${escapeHtml(customer.accountNumber)}</span>
+                    </div>
+                    <div class="customer-detail">
+                        <span class="customer-detail-label">Phone:</span>
+                        <span>${escapeHtml(customer.phone)}</span>
+                    </div>
+                    <div class="customer-detail">
+                        <span class="customer-detail-label">Address:</span>
+                        <span>${escapeHtml(customer.address)}</span>
+                    </div>
+                </div>
+                <div class="customer-balance">
+                    <div class="customer-balance-label">Balance</div>
+                    <div class="customer-balance-amount">${formatMoney(customer.balance)}</div>
+                </div>
+            </article>
+        `).join('');
+        message.className = 'toast';
+    } catch (err) {
+        list.innerHTML = '';
+        showToast(message, err.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btn.classList.remove('is-loading');
+    }
+}
+
+document.getElementById('loadCustomersBtn').addEventListener('click', () => {
+    loadCustomers();
+});
 
 document.getElementById('historyForm').addEventListener('submit', (e) => {
     e.preventDefault();

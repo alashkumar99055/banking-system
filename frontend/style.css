@@ -1356,3 +1356,77 @@ body:has(.login-page) .topbar {
     color: var(--saffron);
 }
 .history-filter .form-actions { margin-top: var(--sp-3); }
+
+/* Customer list */
+.customers-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    margin-top: var(--sp-4);
+}
+
+.customer-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--sp-4);
+    padding: var(--sp-4);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));
+    transition: border-color var(--duration), background var(--duration);
+    animation: fadeUp 0.25s var(--ease-out);
+}
+
+.customer-item:hover {
+    border-color: var(--saffron-muted);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));
+}
+
+.customer-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    min-width: 0;
+}
+
+.customer-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.customer-detail {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.customer-detail-label {
+    color: var(--text-muted);
+    font-weight: 600;
+    min-width: 70px;
+}
+
+.customer-balance {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    text-align: right;
+    white-space: nowrap;
+}
+
+.customer-balance-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.customer-balance-amount {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--money-color);
+    font-variant-numeric: tabular-nums;
+}
