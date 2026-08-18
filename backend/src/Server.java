@@ -28,8 +28,6 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-public class Server {
     private int port;
     private final Path workspaceRoot;
     private final Path staticDir;
@@ -319,19 +317,19 @@ public class Server {
         String method = exchange.getRequestMethod();
         if ("GET".equals(method)) {
             try {
-                List<Database.Account> accounts = database.listAllAccounts();
+                List<Account> accounts = database.listAllAccounts();
                 StringBuilder json = new StringBuilder("[");
                 for (int i = 0; i < accounts.size(); i++) {
-                    Database.Account acc = accounts.get(i);
+                    Account acc = accounts.get(i);
                     if (i > 0) json.append(",");
                     json.append("{")
-                        .append("\"id\":").append(acc.id).append(",")
-                        .append("\"accountNumber\":\"").append(escapeJsonString(acc.accountNumber)).append("\",")
-                        .append("\"customerName\":\"").append(escapeJsonString(acc.customerName)).append("\",")
-                        .append("\"phone\":\"").append(escapeJsonString(acc.phone)).append("\",")
-                        .append("\"address\":\"").append(escapeJsonString(acc.address)).append("\",")
-                        .append("\"balance\":").append(acc.balance).append(",")
-                        .append("\"createdAt\":\"").append(acc.createdAt).append("\"")
+                        .append("\"id\":\"").append(escapeJsonString(acc.getId())).append("\",")
+                        .append("\"accountNumber\":\"").append(escapeJsonString(acc.getAccountNumber())).append("\",")
+                        .append("\"customerName\":\"").append(escapeJsonString(acc.getCustomerName())).append("\",")
+                        .append("\"phone\":\"").append(escapeJsonString(acc.getPhone())).append("\",")
+                        .append("\"address\":\"").append(escapeJsonString(acc.getAddress())).append("\",")
+                        .append("\"balance\":").append(acc.getBalance()).append(",")
+                        .append("\"createdAt\":\"").append(acc.getCreatedAt()).append("\"")
                         .append("}");
                 }
                 json.append("]");
