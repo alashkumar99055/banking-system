@@ -40,6 +40,7 @@
     --error:          #ef4444;
     --error-dim:      rgba(239,68,68,0.10);
     --warning:        var(--green);
+    --money-color:    #4ade80; /* green for amounts and monetary values */
 
     /* Spacing scale */
     --sp-1: 4px;   --sp-2: 8px;   --sp-3: 12px;  --sp-4: 16px;
@@ -133,6 +134,11 @@ body {
 }
 
 /* ── 3. Top navigation bar ────────────────────────────────────── */
+/* Hide topbar on login page */
+body:has(.login-page) .topbar {
+    display: none;
+}
+
 .topbar {
     position: sticky;
     top: 0;
@@ -1295,7 +1301,7 @@ body {
 }
 .summary-row:last-child { border-bottom: none; }
 .summary-row span { color: var(--text-muted); }
-.money { font-variant-numeric: tabular-nums; color: var(--green-light); }
+.money { font-variant-numeric: tabular-nums; color: var(--money-color); }
 .history-list { display: flex; flex-direction: column; gap: var(--sp-3); margin-top: var(--sp-4); }
 .history-item {
     display: flex;
