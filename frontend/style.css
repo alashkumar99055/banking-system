@@ -1062,13 +1062,9 @@ body:has(.login-page) .topbar {
 .login-brand-icon {
     width: 68px;
     height: 68px;
-    border-radius: 50%;
-    background: var(--saffron-dim);
-    border: 1.5px solid var(--saffron-muted);
-    color: var(--saffron);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border-radius: var(--r-sm);
+    object-fit: contain;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
 }
 
 .login-title {
