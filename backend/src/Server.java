@@ -28,6 +28,8 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+public class Server {
     private int port;
     private final Path workspaceRoot;
     private final Path staticDir;
